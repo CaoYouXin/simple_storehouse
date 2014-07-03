@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+	<head>
+		<title>消息发起测试</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+            * {
+                font-family: "文泉驿等宽正黑","微软雅黑","宋体";
+            }
+            a {
+                text-align:center;
+                width:350px;
+                padding:5px 20px;
+                cursor:default;
+                border:2px solid #a1a1a1;
+                border-radius:10px;
+                -moz-border-radius:10px; /* 老的 Firefox */
+            }
+            a:hover {
+                background:#dddddd;
+            }
+            #result {
+                margin-top: 20px;
+            }
+        </style>
+		<script type="text/javascript" src="../../jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="../../md5.js"></script>
+		<script type="text/javascript">
+			var paramMapper;
+
+			$(document).ready(function() {
+				dragData($("#target").val());
+				$("#target").change(function() {
+					dragData($(this).val());
+				});
+				$("#message").change(function() {
+					$("#params").val(paramMapper[$(this).val()]);
+				});
+				$("#justAButton").click(function() {
+					ajaxSubmit($("#godTesterForm"), function(data) {
+						$("#result").val(data);
+					});
+				});
+				$("#clear").click(function() {
+					$("#result").val("");
+				});
+				$("#md5gen").click(function() {
+					$("#md5").val(hex_md5($("#md5").val()));
+				});
+			});
+
+			//将form转为AJAX提交
+			function ajaxSubmit(frm, fn) {
+				var dataPara = getFormJson(frm);
+				$.ajax({
+					url: $(frm).attr("action"),
+					type: $(frm).attr("method"),
+					data: dataPara,
+					success: fn,
+					error: function(/* request, errorMessage, thrownEx */) {
+						alert("这就有问题啦！！！");
+					}
+				});
+			}
+
+			//将form中的值转换为键值对。
+			function getFormJson(frm) {
+				var o = {};
+
+				var a = $(frm).serializeArray();
+				$.each(a, function() {
+					if (o[this.name] !== undefined) {
+						if (!o[this.name].push) {
+							o[this.name] = [o[this.name]];
+						}
+						o[this.name].push(this.value || '');
+					} else {
+						o[this.name] = this.value || '';
+					}
+				});
+
+				o["pwd"] = hex_md5(o["pwd"]);
+				return o;
+			}
+
+			function dragData(target) {
+				$.ajax({
+					type: "post",
+					url: "/ssh/MessageDispatcher",
+					data: {target: "testcatalog", message: "catalog", username: "test", pwd: "test", sTarget: target},
+					dataType: "json",
+					success: function(data) {
+						var innerHtml;
+						paramMapper = {};
+						var key;
+						$.each(data.msg, function(idx, item) {
+							if(idx===0)key=item.msg;
+							paramMapper[item.msg] = item.params || '';
+							innerHtml += "<option value=\"" + item.msg + "\">" + item.desc + "</option>";
+						});
+						$("#message").html(innerHtml);
+						$("#params").val(paramMapper[key]);
+					},
+					error: function(/* request, errorMessage, thrownEx */) {
+						alert("这就有问题啦！！！");
+					}
+				});
+			}
+        </script>
+	</head>
+	<body>
+		<h1>消息发起测试</h1>
+		<form id="godTesterForm" method="post" action="/ssh/MessageDispatcher" enctype="application/x-www-form-urlencoded">
+			选择消息对象：
+			<select name="target" id="target">
+				<option value="dbtest" selected="selected">数据库连接测试</option>
+				<option value="gm">商品管理</option>
+				<option value="customer">客户管理</option>
+				<option value="storage">仓库管理</option>
+				<option value="security">管理员操作</option>
+			</select>
+			选择消息名称：
+			<select name="message" id="message">
+				<option value="gm">商品管理</option>
+				<option value="333">333</option>
+			</select>
+			<br/><hr/>
+			用户名：<input type="text" name="username"/>
+			密码：<input type="password" name="pwd"/>
+			<a id="justAButton">发送</a>
+			<br/><hr/>
+			其它参数：
+			<br/>
+			<textarea id="params" name="testjson" cols="100" rows="6"></textarea>
+		</form>
+		<br/>
+		返回结果：<a id="clear">清除结果</a>
+		<br/>
+		<textarea id="result" readonly="readonly" cols="100" rows="8"></textarea>
+		<hr/>
+		工具:
+		<input id="md5" type="text"/>
+		<a id="md5gen">生成MD5字符串</a>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>樂之道服装仓库系统</title>
+
+		<link rel="stylesheet" type="text/css" href="css/desktop.css" />
+		<link rel="stylesheet" type="text/css" href="../shared/example.css" />
+
+		<!-- GC -->
+
+		<!-- <x-compile> -->
+		<!-- <x-bootstrap> -->
+		<script type="text/javascript" src="../../examples/shared/include-ext.js"></script>
+		<script type="text/javascript" src="../../examples/shared/options-toolbar.js"></script>
+		<script type="text/javascript" src="../shared/examples.js"></script>
+		<script type="text/javascript" src="../../ext-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../../md5.js"></script>
+		<!-- </x-bootstrap> -->
+		<script type="text/javascript">
+			Ext.Loader.setPath({
+				'Ext.ux.desktop': 'js',
+				MyDesktop: '',
+				SSH: '../../sshjs'
+			});
+
+			Ext.require(['SSH.Login', 'SSH.User', 'SSH.Cache']);
+
+			Ext.onReady(function() {
+				SSH.Login.show();
+			});
+		</script>
+		<!-- </x-compile> -->
+	</head>
+
+	<body>
+
+		<div></div>
+
+	</body>
+</html>
