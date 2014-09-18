@@ -8,8 +8,9 @@ package cn.clscpu.test;
 
 import cn.clscpu.storehouse.util.db.DBConfig;
 import cn.clscpu.storehouse.util.db.sql.SQLBuilder;
+
+import java.util.Arrays;
 import java.util.Date;
-import org.apache.catalina.tribes.util.Arrays;
 
 /**
  *
